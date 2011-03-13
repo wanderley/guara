@@ -1,4 +1,4 @@
-scripts_dir=`dirname $0`
+scripts_dir=$(cd $(dirname $0); pwd)
 
 sol=$(ls sols/*-100pts.* | egrep "(.c|.cpp|.rb|.py)$" | head -n 1)
 sol_cmd=$(sh $scripts_dir/compile.sh $sol)

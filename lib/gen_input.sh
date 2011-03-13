@@ -1,4 +1,5 @@
-scripts_dir=$(dirname $0)
+scripts_dir=$(cd $(dirname $0); pwd)
+
 
 echo "Generating inputs"
 echo "========================================================================"

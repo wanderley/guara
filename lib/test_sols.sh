@@ -1,4 +1,4 @@
-script_dir=$(dirname $0)
+scripts_dir=$(cd $(dirname $0); pwd)
 log_path=$(mktemp "/tmp/XXXXXXXXXXX")
 
 time_limit=$(ruby -r 'yaml' -e "puts YAML::load(File.read('config.yml'))['time_limit']")
