@@ -4,10 +4,10 @@ echo "Generating inputs"
 echo "========================================================================"
 echo
 
+rm -rf tests/[1-9]
 for generator in $(find generator | egrep "(.c|.cpp|.rb|.py)$"); do
    printf "%72s\n" $generator
    echo "------------------------------------------------------------------------"
-   rm -rf $(find tests/[1-9]*)
    $(cd tests ; sh $scripts_dir/execute.sh ../$generator)
 done
 
