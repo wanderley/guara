@@ -6,7 +6,7 @@ echo "========================================================================"
 echo
 
 rm -rf tests/[1-9]
-for generator in $(find generator | egrep "(.c|.cpp|.rb|.py)$"); do
+for generator in $(find generator | egrep "(.c|.cpp|.rb|.py|.pl)$"); do
    printf "%72s\n" $generator
    echo "------------------------------------------------------------------------"
    $(cd tests ; sh $scripts_dir/execute.sh ../$generator)

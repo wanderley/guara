@@ -18,6 +18,9 @@ case $source in
 	*.rb)
 		cmd="ruby $source"
 		;;
+	*.pl)
+		cmd="perl $source"
+		;;
 esac
 
 eval "$cmd"
