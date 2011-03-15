@@ -1,8 +1,8 @@
 scripts_dir=$(cd $(dirname $0); pwd)
 log_path=$(mktemp "/tmp/XXXXXXXXXXX")
 
-time_limit=$(ruby -r 'yaml' -e "puts YAML::load(File.read('config.yml'))['time_limit']")
-special_judge=$(ruby -r 'yaml' -e "puts YAML::load(File.read('config.yml'))['special_judge']")
+time_limit=$(ruby -r 'yaml' -e "puts YAML::load(File.read('config.yml'))['time_limit'] || ''")
+special_judge=$(ruby -r 'yaml' -e "puts YAML::load(File.read('config.yml'))['special_judge'] || ''")
 if [ -n "$special_judge" ]; then
   special_judge_cmd=$(sh $scripts_dir/compile.sh $special_judge)
 fi
