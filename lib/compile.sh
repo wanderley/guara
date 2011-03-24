@@ -27,6 +27,12 @@ case $source in
 	*.pl)
 		cmd="perl $source"
 		;;
+	*.pas)
+		t=`mktemp /tmp/XXXXXXXXXX`
+		fpc -O2 -o$t $source
+    ret_val=$?
+		cmd="$t"
+		;;
 esac
 
 echo $cmd
