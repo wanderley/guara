@@ -18,7 +18,12 @@ module Guara
     end
 
     def compile!
-      %x[gcc #{@source_file} -o #{@compiled_file.path} 2>> #{@error_file.path}]
+      case @source_file_extension
+      when '.c'
+        %x[gcc #{@source_file} -o #{@compiled_file.path} 2>> #{@error_file.path}]
+      when /.c(pp|c)/
+        %x[g++ #{@source_file} -o #{@compiled_file.path} 2>> #{@error_file.path}]
+      end
       return ($?.exitstatus == 0)
     end
 
