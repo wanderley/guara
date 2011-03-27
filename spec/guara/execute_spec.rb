@@ -78,5 +78,9 @@ module Guara
     describe 'Source file in Ruby' do
       it_should_behave_like 'supported language', 'rb'
     end
+
+    describe 'Source file in Python' do
+      it_should_behave_like 'supported language', 'py'
+    end
   end
 end

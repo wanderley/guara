@@ -28,6 +28,9 @@ module Guara
       when /.rb/
         %x[ruby -c #{@source_file} 2> /dev/null]
         @execute_command = "ruby #{@source_file}"
+      when /.py/
+        %x[python -m py_compile #{@source_file} 2> /dev/null]
+        @execute_command = "python #{@source_file}"
       end
       return ($?.exitstatus == 0)
     end
