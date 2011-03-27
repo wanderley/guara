@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.push File.join(File.dirname(__FILE__), "/../lib")
+require 'guara'
+require 'optparse'
+
+case ARGV[0]
+when 'exec'
+  options = {}
+  OptionParser.new do |opts|
+    opts.on('-t', '--time-limit [TIME]') do |time|
+      options[:time_limit] ||= time.to_i
+    end
+    opts.on('-i', '--input-file [FILE_PATH]') do |input_file|
+      options[:input_file] ||= input_file
+    end
+    opts.on('-o', '--output-file [FILE_PATH]') do |output_file|
+      options[:output_file] ||= output_file
+    end
+    opts.on('-e', '--error-file [FILE_PATH]') do |error_file|
+      options[:error_file] ||= error_file
+    end
+  end.parse!(ARGV[2..-1])
+
+  exec = Guara::Execute.new(ARGV[1], options)
+  exit exec.run!
+end
+
+# vim: set filetype=ruby :
