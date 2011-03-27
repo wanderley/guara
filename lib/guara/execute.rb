@@ -21,8 +21,13 @@ module Guara
       case @source_file_extension
       when '.c'
         %x[gcc #{@source_file} -o #{@compiled_file.path} 2>> #{@error_file.path}]
+        @execute_command = @compiled_file.path
       when /.c(pp|c)/
         %x[g++ #{@source_file} -o #{@compiled_file.path} 2>> #{@error_file.path}]
+        @execute_command = @compiled_file.path
+      when /.rb/
+        %x[ruby -c #{@source_file} 2> /dev/null]
+        @execute_command = "ruby #{@source_file}"
       end
       return ($?.exitstatus == 0)
     end
@@ -37,7 +42,7 @@ module Guara
         STDOUT.reopen(@options[:output_file]) if @options[:output_file]
         STDERR.reopen(@options[:error_file])  if @options[:error_file]
 
-        exec @compiled_file.path
+        exec *@execute_command
       }
       status = Process.wait2(@pid)[1]
       if status.exited?

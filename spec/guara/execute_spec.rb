@@ -74,5 +74,9 @@ module Guara
     describe 'Source file in C++' do
       it_should_behave_like 'supported language', 'cpp'
     end
+
+    describe 'Source file in Ruby' do
+      it_should_behave_like 'supported language', 'rb'
+    end
   end
 end
