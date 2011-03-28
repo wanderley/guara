@@ -1,0 +1,9 @@
+require "autotest/bundler"
+
+
+Autotest.add_hook :initialize do |at|
+  # Ignore files in tmp/
+  at.add_exception 'tmp'
+end
+
+# vim: set filetype=ruby :
