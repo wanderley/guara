@@ -1,4 +1,5 @@
-require "autotest/bundler"
+require 'autotest/bundler'
+require 'autotest/growl'
 
 
 Autotest.add_hook :initialize do |at|
