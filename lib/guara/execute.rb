@@ -12,25 +12,37 @@ module Guara
     def initialize(source, options={})
       @source_file = source
       @source_file_extension = File.extname(source)
-      @error_file    = Tempfile.new('error_file')
-      @compiled_file = Tempfile.new('compiled')
+      @tmp_dir       = Dir.mktmpdir
+      @error_file    = File.join(@tmp_dir, 'stderr')
+      @compiled_file = File.join(@tmp_dir, 'exec')
       @options = options
+      ObjectSpace.define_finalizer(self, self.class.finalizer(@tmp_dir))
+    end
+
+    def self.finalizer(tmp_dir)
+      proc { FileUtils.remove_entry_secure(tmp_dir) }
     end
 
     def compile!
       case @source_file_extension
       when '.c'
-        %x[gcc #{@source_file} -o #{@compiled_file.path} 2>> #{@error_file.path}]
-        @execute_command = @compiled_file.path
+        %x[gcc #{@source_file} -o #{@compiled_file} 2>> #{@error_file}]
+        @execute_command = @compiled_file
       when /.c(pp|c)/
-        %x[g++ #{@source_file} -o #{@compiled_file.path} 2>> #{@error_file.path}]
-        @execute_command = @compiled_file.path
+        %x[g++ #{@source_file} -o #{@compiled_file} 2>> #{@error_file}]
+        @execute_command = @compiled_file
       when /.rb/
-        %x[ruby -c #{@source_file} 2> /dev/null]
+        %x[ruby -c #{@source_file} 2>> #{@error_file}]
         @execute_command = "ruby #{@source_file}"
       when /.py/
-        %x[python -m py_compile #{@source_file} 2> /dev/null]
+        %x[python -m py_compile #{@source_file} 2>> #{@error_file}]
         @execute_command = "python #{@source_file}"
+      when /.java/
+        FileUtils.cp(@source_file, @tmp_dir)
+        FileUtils.cd(@tmp_dir) do
+          %x[javac #{File.basename(@source_file)} 2>> #{@error_file}]
+        end
+        @execute_command = "java -cp #{@tmp_dir} #{File.basename(@source_file, '.java')}"
       end
       return ($?.exitstatus == 0)
     end

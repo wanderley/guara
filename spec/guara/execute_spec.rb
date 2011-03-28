@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__), "/../spec_helper")
 require 'timeout'
 
 module Guara
-  TIME_LIMIT = 1
+  TIME_LIMIT = 3
 
 
   shared_examples_for "supported language" do |ext|
@@ -81,6 +81,10 @@ module Guara
 
     describe 'Source file in Python' do
       it_should_behave_like 'supported language', 'py'
+    end
+
+    describe 'Source file in Java' do
+      it_should_behave_like 'supported language', 'java'
     end
   end
 end
