@@ -63,3 +63,14 @@ Feature: exec source_file [options]
      When I run `guara exec tostderr.c --error-file stderr.txt`
      Then the file "stderr.txt" should contain "stderr"
 
+  @wip
+  Scenario: run and kill when compiling take a long time
+    Given a file named "compile-timeout.c" with:
+          """
+          #include "/dev/random"
+          int main () {
+            return 0;
+          }
+          """
+          When I run `guara exec compile-timeout.c --error-file=stderr.txt`
+     Then the file "stderr.txt" should contain "Compilation exceeded time limit!"

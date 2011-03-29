@@ -5,6 +5,7 @@ module Guara
   EXIT_COMPILE_ERROR       = 1
   EXIT_TIME_LIMIT_EXCEEDED = 2
   EXIT_GAP                 = 1000
+  COMPILE_TIME_LIMIT       = 10
 
   class Execute
     attr_reader :source_file, :source_file_extension, :error_file
@@ -24,52 +25,50 @@ module Guara
     end
 
     def compile!
+      p = nil
       case @source_file_extension
       when '.c'
-        %x[gcc #{@source_file} -o #{@compiled_file} 2>> #{@error_file}]
+        p = ChildProcess.build("gcc #{@source_file} -o #{@compiled_file}")
         @execute_command = @compiled_file
       when /.c(pp|c)/
-        %x[g++ #{@source_file} -o #{@compiled_file} 2>> #{@error_file}]
+        p = ChildProcess.build("g++ #{@source_file} -o #{@compiled_file}")
         @execute_command = @compiled_file
       when /.rb/
-        %x[ruby -c #{@source_file} 2>> #{@error_file}]
+        p = ChildProcess.build("ruby -c #{@source_file}")
         @execute_command = "ruby #{@source_file}"
       when /.py/
-        %x[python -m py_compile #{@source_file} 2>> #{@error_file}]
+        p = ChildProcess.build("python -m py_compile #{@source_file}")
         @execute_command = "python #{@source_file}"
       when /.java/
         FileUtils.cp(@source_file, @tmp_dir)
         FileUtils.cd(@tmp_dir) do
-          %x[javac #{File.basename(@source_file)} 2>> #{@error_file}]
+          p = ChildProcess.build("javac #{File.basename(@source_file)}")
         end
-        @execute_command = "java -cp #{@tmp_dir} #{File.basename(@source_file, '.java')}"
+        @execute_command = 
+          "java -cp #{@tmp_dir} #{File.basename(@source_file, '.java')}"
       end
-      return ($?.exitstatus == 0)
+      p.timeout = 10
+      p.stderr  = File.new(@error_file, 'w')
+      case @source_file_extension
+      when /.java/
+        FileUtils.cd(@tmp_dir) do
+          return p.run! == Guara::EXIT_SUCCESS
+        end
+      else 
+        return p.run! == Guara::EXIT_SUCCESS
+      end
     end
 
     def run!
       return Guara::EXIT_COMPILE_ERROR unless compile!
-      @pid = fork {
-        Process.setrlimit(Process::RLIMIT_CPU,
-                          @options[:time_limit]) if @options[:time_limit]
-
-        STDIN.reopen(@options[:input_file])   if @options[:input_file]
-        STDOUT.reopen(@options[:output_file]) if @options[:output_file]
-        STDERR.reopen(@options[:error_file])  if @options[:error_file]
-
-        exec *@execute_command
-      }
-      status = Process.wait2(@pid)[1]
-      if status.exited?
-        return EXIT_SUCCESS if status.exitstatus == 0
-        return status.exitstatus + Guara::EXIT_GAP
-      else
-        if RUBY_PLATFORM.include?('linux')
-          return Guara::EXIT_TIME_LIMIT_EXCEEDED if status.termsig == 9
-        else
-          return Guara::EXIT_TIME_LIMIT_EXCEEDED if status.termsig == 24
-        end
-      end
+      p = Guara::ChildProcess.build(@execute_command)
+      p.stdout  = nil
+      p.stderr  = nil
+      p.stdin   = File.new(@options[:input_file], 'r')  if @options[:input_file]
+      p.stdout  = File.new(@options[:output_file], 'w') if @options[:output_file]
+      p.stderr  = File.new(@options[:error_file], 'w')  if @options[:error_file]
+      p.timeout = @options[:time_limit]                 if @options[:time_limit]
+      p.run!
     end
   end
 end

@@ -2,8 +2,7 @@ require File.join(File.dirname(__FILE__), "/../spec_helper")
 require 'timeout'
 
 module Guara
-  TIME_LIMIT = 3
-
+  TIME_LIMIT = 10
 
   shared_examples_for "supported language" do |ext|
     it "should compile" do
@@ -32,9 +31,9 @@ module Guara
     end
 
     it "should run and kill when exceed time limit" do
-      Timeout::timeout(2 * TIME_LIMIT) do
+      Timeout::timeout(TIME_LIMIT) do
         exec = Guara::Execute.new("spec/resources/timelimit.#{ext}",
-                                  :time_limit => TIME_LIMIT)
+                                  :time_limit => 2)
         exec.run!.should eq(Guara::EXIT_TIME_LIMIT_EXCEEDED)
       end
     end

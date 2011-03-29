@@ -18,16 +18,39 @@ module Guara
     end
 
     def run!
-      @pid = fork {
-        Process.setrlimit(Process::RLIMIT_CPU, @timeout) if @timeout
+      @pid   = nil
+      status = nil
+      
+      run_command = proc do
+        @pid = fork do
+          Process.setrlimit(Process::RLIMIT_CPU, @timeout) if @timeout
 
-        STDIN.reopen(@stdin)   if @stdin
-        STDOUT.reopen(@stdout) if @stdout
-        STDERR.reopen(@stderr) if @stderr
+          STDIN.reopen(@stdin)   if @stdin
+          STDOUT.reopen(@stdout) if @stdout
+          STDERR.reopen(@stderr) if @stderr
 
-        exec(*@command)
-      }
-      status = Process.wait2(@pid)[1]
+          Process.exec(*@command)
+        end
+        status = Process.wait2(@pid)[1]
+      end
+
+      if @timeout
+        thread = Thread.new do
+          run_command.call()
+        end
+        (2 * @timeout).times do |i|
+          sleep 1
+          break unless thread.status
+        end
+        if status.nil?
+          Process.kill(9, @pid)
+          thread.kill
+          return @exit_code = Guara::EXIT_TIME_LIMIT_EXCEEDED
+        end 
+      else
+        run_command.call()
+      end
+
       if status.exited?
         return @exit_code = Guara::EXIT_SUCCESS if status.exitstatus == 0
         return @exit_code = status.exitstatus + Guara::EXIT_GAP

@@ -3,6 +3,7 @@ require File.join(File.dirname(__FILE__), "/../spec_helper")
 require 'timeout'
 
 module Guara
+  TIME_LIMIT = 5
   describe ChildProcess do
     it 'should exec a command' do
       process = Guara::ChildProcess.build('ls')
@@ -11,7 +12,7 @@ module Guara
     end
 
     it 'should exec and kill after 1 second' do
-      Timeout::timeout(2) do
+      Timeout::timeout(TIME_LIMIT) do
         process = Guara::ChildProcess.build('while [ true ]; do echo ''; done;')
         process.timeout = 1
         process.run!
