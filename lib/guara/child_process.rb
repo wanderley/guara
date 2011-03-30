@@ -38,8 +38,10 @@ module Guara
         thread = Thread.new do
           run_command.call()
         end
-        (2 * @timeout).times do |i|
-          sleep 1
+        real_time = 0.0
+        while real_time < 2 * @timeout
+          sleep 0.1
+          real_time += 0.1
           break unless thread.status
         end
         if status.nil?
