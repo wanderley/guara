@@ -37,10 +37,10 @@ module Guara
       p = nil
       case @source_file_extension
       when '.c'
-        p = ChildProcess.build("gcc #{@source_file} -o #{@compiled_file}")
+        p = ChildProcess.build("gcc -O2 -fomit-frame-pointer #{@source_file} -o #{@compiled_file}")
         @execute_command = @compiled_file
       when /.c(pp|c)/
-        p = ChildProcess.build("g++ #{@source_file} -o #{@compiled_file}")
+        p = ChildProcess.build("g++ -O2 -fomit-frame-pointer #{@source_file} -o #{@compiled_file}")
         @execute_command = @compiled_file
       when /.rb/
         p = ChildProcess.build("ruby -c #{@source_file}")
