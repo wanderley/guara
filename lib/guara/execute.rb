@@ -9,14 +9,21 @@ module Guara
 
   class Execute
     attr_reader :source_file, :source_file_extension, :error_file
+    attr_accessor :input_file, :output_file, :time_limit, :error_file
 
     def initialize(source, options={})
       @source_file = source
       @source_file_extension = File.extname(source)
       @tmp_dir       = Dir.mktmpdir
-      @error_file    = options[:error_file]
       @compiled_file = File.join(@tmp_dir, 'exec')
+      @compiled      = false
+
       @options = options
+      @input_file  = @options[:input_file]
+      @output_file = @options[:output_file]
+      @error_file  = @options[:error_file]
+      @time_limit  = @options[:time_limit]
+
       ObjectSpace.define_finalizer(self, self.class.finalizer(@tmp_dir))
     end
 
@@ -25,6 +32,7 @@ module Guara
     end
 
     def compile!
+      return @compiled if @compiled
       p = nil
       case @source_file_extension
       when '.c'
@@ -67,6 +75,7 @@ module Guara
         f.puts IO.read(p.stderr.path)
         f.flush
       end
+      @compiled = true
       exit_code == Guara::EXIT_SUCCESS
     end
 
@@ -75,10 +84,10 @@ module Guara
       p = Guara::ChildProcess.build(@execute_command)
       p.stdout  = nil
       p.stderr  = nil
-      p.stdin   = File.new(@options[:input_file], 'r')  if @options[:input_file]
-      p.stdout  = File.new(@options[:output_file], 'w') if @options[:output_file]
-      p.stderr  = File.new(@options[:error_file], 'w')  if @options[:error_file]
-      p.timeout = @options[:time_limit]                 if @options[:time_limit]
+      p.stdin   = File.new(@input_file, 'r')  if @input_file
+      p.stdout  = File.new(@output_file, 'w') if @output_file
+      p.stderr  = File.new(@error_file, 'w')  if @error_file
+      p.timeout = @time_limit                 if @time_limit
       p.run!
     end
   end
