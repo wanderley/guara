@@ -40,7 +40,7 @@ module Guara
 
     it "should run and redirect file to input" do
       Timeout::timeout(TIME_LIMIT) do        
-        exec = Guara::Execute.new("spec/resources/exit0ifreciveinput.#{ext}",
+        exec = Guara::Execute.new("spec/resources/exit0ifreceiveinput.#{ext}",
                                   :input_file => "spec/resources/text")
         exec.run!.should eq(Guara::EXIT_SUCCESS)
       end
@@ -102,6 +102,10 @@ module Guara
 
     describe 'Source file in Java' do
       it_should_behave_like 'supported language', 'java'
+    end
+
+    describe 'Source file in Pascal' do
+      it_should_behave_like 'supported language', 'pas'
     end
   end
 end

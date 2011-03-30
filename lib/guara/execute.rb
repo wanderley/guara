@@ -55,6 +55,12 @@ module Guara
         end
         class_file = File.basename(@source_file, '.java')
         @execute_command = "java -cp #{@tmp_dir} #{class_file}"
+      when /.pas/
+        FileUtils.cp(@source_file, @tmp_dir)
+        FileUtils.cd(@tmp_dir) do
+          p = ChildProcess.build("fpc -O2 -o#{@compiled_file} #{@source_file}")
+          @execute_command = @compiled_file
+        end
       end
 
       p.timeout = 10

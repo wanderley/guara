@@ -1,0 +1,5 @@
+program compile;
+
+begin
+
+end.
