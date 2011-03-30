@@ -16,7 +16,7 @@ module Guara
       @source_file_extension = File.extname(source)
       @tmp_dir       = Dir.mktmpdir
       @compiled_file = File.join(@tmp_dir, 'exec')
-      @compiled      = false
+      @compiled      = nil
 
       @options = options
       @input_file  = @options[:input_file]
@@ -32,7 +32,7 @@ module Guara
     end
 
     def compile!
-      return @compiled if @compiled
+      return @compiled unless @compiled.nil?
       p = nil
       case @source_file_extension
       when '.c'
@@ -75,8 +75,7 @@ module Guara
         f.puts IO.read(p.stderr.path)
         f.flush
       end
-      @compiled = true
-      exit_code == Guara::EXIT_SUCCESS
+      @compiled = (exit_code == Guara::EXIT_SUCCESS)
     end
 
     def run!
