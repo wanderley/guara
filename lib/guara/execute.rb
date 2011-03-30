@@ -38,23 +38,23 @@ module Guara
       case @source_file_extension
       when '.c'
         p = ChildProcess.build("gcc #{@source_file} -o #{@compiled_file}")
-        @execute_command = "#{@compiled_file} #{@params}"
+        @execute_command = @compiled_file
       when /.c(pp|c)/
         p = ChildProcess.build("g++ #{@source_file} -o #{@compiled_file}")
-        @execute_command = "#{@compiled_file} #{@params}"
+        @execute_command = @compiled_file
       when /.rb/
         p = ChildProcess.build("ruby -c #{@source_file}")
-        @execute_command = "ruby #{@source_file} #{@params}"
+        @execute_command = "ruby #{@source_file}"
       when /.py/
         p = ChildProcess.build("python -m py_compile #{@source_file}")
-        @execute_command = "python #{@source_file} #{@params}"
+        @execute_command = "python #{@source_file}"
       when /.java/
         FileUtils.cp(@source_file, @tmp_dir)
         FileUtils.cd(@tmp_dir) do
           p = ChildProcess.build("javac #{File.basename(@source_file)}")
         end
         class_file = File.basename(@source_file, '.java')
-        @execute_command = "java -cp #{@tmp_dir} #{class_file} #{@params}"
+        @execute_command = "java -cp #{@tmp_dir} #{class_file}"
       end
 
       p.timeout = 10
@@ -81,7 +81,7 @@ module Guara
 
     def run!
       return Guara::EXIT_COMPILE_ERROR unless compile!
-      p = Guara::ChildProcess.build(@execute_command)
+      p = Guara::ChildProcess.build("#{@execute_command} #{@params}")
       p.stdout  = nil
       p.stderr  = nil
       p.stdin   = File.new(@input_file, 'r')  if @input_file
