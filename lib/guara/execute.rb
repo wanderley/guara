@@ -87,7 +87,13 @@ module Guara
       p.stdout  = File.new(@output_file, 'w') if @output_file
       p.stderr  = File.new(@error_file, 'w')  if @error_file
       p.timeout = @time_limit                 if @time_limit
-      p.run!
+
+      exit_code = p.run!
+
+      p.stdin.close  if @input_file
+      p.stdout.close if @output_file
+      p.stderr.close if @error_file
+      exit_code
     end
   end
 end
