@@ -14,7 +14,7 @@ module Guara
       @source_file = source
       @source_file_extension = File.extname(source)
       @tmp_dir       = Dir.mktmpdir
-      @error_file    = File.join(@tmp_dir, 'stderr')
+      @error_file    = options[:error_file]
       @compiled_file = File.join(@tmp_dir, 'exec')
       @options = options
       ObjectSpace.define_finalizer(self, self.class.finalizer(@tmp_dir))
@@ -47,16 +47,27 @@ module Guara
         @execute_command = 
           "java -cp #{@tmp_dir} #{File.basename(@source_file, '.java')}"
       end
+
       p.timeout = 10
-      p.stderr  = File.new(@error_file, 'w')
+      exit_code = nil
+
       case @source_file_extension
       when /.java/
         FileUtils.cd(@tmp_dir) do
-          return p.run! == Guara::EXIT_SUCCESS
+          exit_code = p.run!
         end
       else 
-        return p.run! == Guara::EXIT_SUCCESS
+        exit_code = p.run!
       end
+
+      if exit_code != Guara::EXIT_SUCCESS
+        f = (@error_file ? File.new(@error_file, 'w') : STDERR)
+        f.puts "Compile error"
+        f.puts "------------------------------------------------------------------------"
+        f.puts IO.read(p.stderr.path)
+        f.flush
+      end
+      exit_code == Guara::EXIT_SUCCESS
     end
 
     def run!

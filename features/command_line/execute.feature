@@ -63,6 +63,19 @@ Feature: exec source_file [options]
      When I run `guara exec tostderr.c --error-file stderr.txt`
      Then the file "stderr.txt" should contain "stderr"
 
+  Scenario: show compilation error
+    Given a file named "compilation-error.c" with:
+          """
+          #include <stdio.h>
+          int main () {
+            printf ("")
+            return 0;
+          }
+          """
+     When I run `guara exec compilation-error.c`
+     Then the output should contain "Compile error"
+      And the output should contain "error: expected ‘;’ before ‘return’"
+
   @wip
   Scenario: run and kill when compiling take a long time
     Given a file named "compile-timeout.c" with:

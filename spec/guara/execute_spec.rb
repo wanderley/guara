@@ -63,6 +63,14 @@ module Guara
       File.zero?(stderr.path).should be_false
       stderr.close!
     end
+
+    it "should output compilation error" do
+      stderr = Tempfile.new('stderr')
+      exec = Guara::Execute.new("spec/resources/notcompile.#{ext}",
+                                :error_file => stderr.path)
+      exec.run!.should eq(Guara::EXIT_COMPILE_ERROR)
+      IO.read(stderr.path).should include('Compile error')
+    end
   end
 
   describe Execute do

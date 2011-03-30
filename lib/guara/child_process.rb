@@ -43,7 +43,6 @@ module Guara
           break unless thread.status
         end
         if status.nil?
-          Process.kill(9, @pid)
           thread.kill
           return @exit_code = Guara::EXIT_TIME_LIMIT_EXCEEDED
         end 
