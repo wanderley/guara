@@ -71,6 +71,16 @@ module Guara
       exec.run!.should eq(Guara::EXIT_COMPILE_ERROR)
       IO.read(stderr.path).should include('Compile error')
     end
+
+    it "should run with parameters" do
+      stdout = Tempfile.new('stdout')
+      exec = Guara::Execute.new("spec/resources/printargs.#{ext}",
+                                :output_file => stdout.path,
+                                :error_file  => '/dev/null',
+                                :params      => 'param')
+      exec.run!.should eq(Guara::EXIT_SUCCESS)
+      IO.read(stdout.path).should include('param')
+    end
   end
 
   describe Execute do

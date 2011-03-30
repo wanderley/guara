@@ -9,7 +9,7 @@ module Guara
 
   class Execute
     attr_reader :source_file, :source_file_extension, :error_file
-    attr_accessor :input_file, :output_file, :time_limit, :error_file
+    attr_accessor :input_file, :output_file, :time_limit, :error_file, :params
 
     def initialize(source, options={})
       @source_file = source
@@ -23,6 +23,7 @@ module Guara
       @output_file = @options[:output_file]
       @error_file  = @options[:error_file]
       @time_limit  = @options[:time_limit]
+      @params      = @options[:params] || ''
 
       ObjectSpace.define_finalizer(self, self.class.finalizer(@tmp_dir))
     end
@@ -37,23 +38,23 @@ module Guara
       case @source_file_extension
       when '.c'
         p = ChildProcess.build("gcc #{@source_file} -o #{@compiled_file}")
-        @execute_command = @compiled_file
+        @execute_command = "#{@compiled_file} #{@params}"
       when /.c(pp|c)/
         p = ChildProcess.build("g++ #{@source_file} -o #{@compiled_file}")
-        @execute_command = @compiled_file
+        @execute_command = "#{@compiled_file} #{@params}"
       when /.rb/
         p = ChildProcess.build("ruby -c #{@source_file}")
-        @execute_command = "ruby #{@source_file}"
+        @execute_command = "ruby #{@source_file} #{@params}"
       when /.py/
         p = ChildProcess.build("python -m py_compile #{@source_file}")
-        @execute_command = "python #{@source_file}"
+        @execute_command = "python #{@source_file} #{@params}"
       when /.java/
         FileUtils.cp(@source_file, @tmp_dir)
         FileUtils.cd(@tmp_dir) do
           p = ChildProcess.build("javac #{File.basename(@source_file)}")
         end
-        @execute_command = 
-          "java -cp #{@tmp_dir} #{File.basename(@source_file, '.java')}"
+        class_file = File.basename(@source_file, '.java')
+        @execute_command = "java -cp #{@tmp_dir} #{class_file} #{@params}"
       end
 
       p.timeout = 10

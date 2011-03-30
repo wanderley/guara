@@ -76,6 +76,22 @@ Feature: exec source_file [options]
      Then the output should contain "Compile error"
       And the output should contain "error: expected ‘;’ before ‘return’"
 
+  Scenario: run with parameters
+    Given a file named "print-args.c" with:
+          """
+          #include <stdio.h>
+          int main (int argc, char *argv[]) {
+            int i;
+            for (i = 0; i < argc; i++) {
+              printf ("%s\n", argv[i]);
+            }
+            return 0;
+          }
+          """
+     When I run `guara exec print-args.c --params "param1 param2"`
+     Then the output should contain "param1"
+      And the output should contain "param2"
+
   @wip
   Scenario: run and kill when compiling take a long time
     Given a file named "compile-timeout.c" with:

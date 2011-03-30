@@ -20,6 +20,9 @@ when 'exec'
     opts.on('-e', '--error-file [FILE_PATH]') do |error_file|
       options[:error_file] ||= error_file
     end
+    opts.on('-p', '--params [PARAMS]') do |params|
+      options[:params] ||= params
+    end
   end.parse!(ARGV[2..-1])
 
   exec = Guara::Execute.new(ARGV[1], options)
