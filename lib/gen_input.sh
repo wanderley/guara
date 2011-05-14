@@ -5,7 +5,7 @@ echo "Generating inputs"
 echo "========================================================================"
 echo
 
-rm -rf tests/[1-9]
+rm -rf tests/[1-9]*
 for generator in $(find generator | egrep "(.c|.cpp|.rb|.py|.pl)$"); do
    printf "%72s\n" $generator
    echo "------------------------------------------------------------------------"
