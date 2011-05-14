@@ -37,7 +37,7 @@ module Guara
       p = nil
       case @source_file_extension
       when '.c'
-        p = ChildProcess.build("gcc -O2 -fomit-frame-pointer #{@source_file} -o #{@compiled_file}")
+        p = ChildProcess.build("gcc -std=c99 -O2 -fomit-frame-pointer #{@source_file} -o #{@compiled_file}")
         @execute_command = @compiled_file
       when /.c(pp|c)/
         p = ChildProcess.build("g++ -O2 -fomit-frame-pointer #{@source_file} -o #{@compiled_file}")
