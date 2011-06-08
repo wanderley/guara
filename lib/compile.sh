@@ -18,6 +18,12 @@ case $source in
     ret_val=$?
     cmd="$t"
     ;;
+  *.cc)
+    t=`mktemp /tmp/XXXXXXXXXX`
+    g++ -O2 -fomit-frame-pointer -o $t $source
+    ret_val=$?
+    cmd="$t"
+    ;;
   *.cpp)
     t=`mktemp /tmp/XXXXXXXXXX`
     g++ -O2 -fomit-frame-pointer -o $t $source
