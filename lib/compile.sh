@@ -8,26 +8,11 @@ ret_val=1
 case $source in
   *.c)
     t=`mktemp /tmp/XXXXXXXXXX`
-    gcc -O2 -fomit-frame-pointer -o $t $source
+    gcc -std=gnu99 -O2 -fomit-frame-pointer -o $t $source
     ret_val=$?
     cmd="$t"
     ;;
-  *.c99)
-    t=`mktemp /tmp/XXXXXXXXXX`
-    src=`mktemp /tmp/XXXXXXXXXX`
-    cp $source $src.c
-    gcc -std=gnu99 -O2 -fomit-frame-pointer -o $t $src.c
-    rm $src.c
-    ret_val=$?
-    cmd="$t"
-    ;;
-  *.cc)
-    t=`mktemp /tmp/XXXXXXXXXX`
-    g++ -O2 -fomit-frame-pointer -o $t $source
-    ret_val=$?
-    cmd="$t"
-    ;;
-  *.cpp)
+  *.C|*.cc|*.cpp)
     t=`mktemp /tmp/XXXXXXXXXX`
     g++ -O2 -fomit-frame-pointer -o $t $source
     ret_val=$?

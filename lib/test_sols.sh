@@ -13,7 +13,7 @@ echo "Testing solutions"
 echo "========================================================================"
 echo
 
-for sol in $(ls sols/ | egrep "\-[0-9]+pts..{1,3}$" | egrep "(.c|.cpp|.rb|.py|.pl|.pas)"); do
+for sol in $(ls sols/ | egrep "\-[0-9]+pts..{1,3}$" | egrep "(.c|.C|.cc|.cpp|.rb|.py|.pl|.pas)"); do
   printf "%72s\n" $sol
   echo   "------------------------------------------------------------------------"
 
