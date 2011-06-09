@@ -14,7 +14,10 @@ case $source in
     ;;
   *.c99)
     t=`mktemp /tmp/XXXXXXXXXX`
-    gcc -std=gnu99 -O2 -fomit-frame-pointer -o $t $source
+    src=`mktemp /tmp/XXXXXXXXXX`
+    cp $source $src.c
+    gcc -std=gnu99 -O2 -fomit-frame-pointer -o $t $src.c
+    rm $src.c
     ret_val=$?
     cmd="$t"
     ;;
