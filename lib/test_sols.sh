@@ -24,13 +24,15 @@ for sol in $(ls sols/ | egrep "\-[0-9]+pts..{1,3}$" | egrep "(.c|.C|.cc|.cpp|.rb
     for input_file in $(ls tests/$test_dir/in*); do
       output_file=$(echo $input_file | sed 's:in\(.*\)$:out\1:g')
       user_output_file=$(mktemp /tmp/XXXXXXXXXXX)
-      $sol_cmd < $input_file > $user_output_file
+      $scripts_dir/guara/bin/time -f "t=%Us m=%MKB" -o /tmp/__time_memory \
+        $sol_cmd < $input_file > $user_output_file
       if [ -n "$special_judge" ]; then
         $special_judge_cmd $input_file $output_file $user_output_file sols/$sol > /dev/null
       else
         diff $output_file $user_output_file > /dev/null
       fi
       if [ $? -eq '0' ]; then printf '.'; else printf 'F'; fi
+      printf "%72s\n" `cat /tmp/__tmp_memory`
       rm $user_output_file
     done ; echo
   done ; echo
