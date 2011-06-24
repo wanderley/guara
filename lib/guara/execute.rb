@@ -36,6 +36,11 @@ module Guara
       return @compiled unless @compiled.nil?
       p = nil
       case @source_file_extension
+      when '.c99'
+        source_file_c = File.join(@tmp_dir, 'sol.c')
+        FileUtils.cp(@source_file, source_file_c)
+        p = ChildProcess.build("gcc -std=gnu99 -O2 -fomit-frame-pointer #{source_file_c} -o #{@compiled_file}")
+        @execute_command = @compiled_file
       when '.c'
         p = ChildProcess.build("gcc -O2 -fomit-frame-pointer #{@source_file} -o #{@compiled_file}")
         @execute_command = @compiled_file

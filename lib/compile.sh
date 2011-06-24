@@ -6,6 +6,15 @@ cmd=''
 ret_val=1
 
 case $source in
+	*.c99)
+    d="`mktemp -d`"
+		t="`mktemp`"
+    mv "$source" "$d/a.c"
+		gcc -std=gnu99 -O2 -fomit-frame-pointer -o "$t" "$d/a.c"
+    ret_val=$?
+		cmd="$t"
+    rm -rf "$d"
+		;;
 	*.c)
 		t=`mktemp /tmp/XXXXXXXXXX`
 		gcc -O2 -fomit-frame-pointer -o $t $source
