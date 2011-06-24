@@ -19,29 +19,29 @@ case $source in
 		t=`mktemp /tmp/XXXXXXXXXX`
 		gcc -O2 -fomit-frame-pointer -o $t $source
     ret_val=$?
-		cmd="$t"
-		;;
-	*.cpp)
-		t=`mktemp /tmp/XXXXXXXXXX`
-		g++ -O2 -fomit-frame-pointer -o $t $source
+    cmd="$t"
+    ;;
+  *.C|*.cc|*.cpp)
+    t=`mktemp /tmp/XXXXXXXXXX`
+    g++ -O2 -fomit-frame-pointer -o $t $source
     ret_val=$?
-		cmd="$t"
-		;;
-	*.py)
-		cmd="python $source"
-		;;
-	*.rb)
-		cmd="ruby $source"
-		;;
-	*.pl)
-		cmd="perl $source"
-		;;
-	*.pas)
-		t=`mktemp /tmp/XXXXXXXXXX`
-		fpc -O2 -o$t $source
+    cmd="$t"
+    ;;
+  *.py)
+    cmd="python $source"
+    ;;
+  *.rb)
+    cmd="ruby $source"
+    ;;
+  *.pl)
+    cmd="perl $source"
+    ;;
+  *.pas)
+    t=`mktemp /tmp/XXXXXXXXXX`
+    fpc -O2 -o$t $source
     ret_val=$?
-		cmd="$t"
-		;;
+    cmd="$t"
+    ;;
 esac
 
 echo $cmd

@@ -1,6 +1,6 @@
 scripts_dir=$(cd $(dirname $0); pwd)
 
-sol=$(ls sols/*-100pts.* | egrep "(.c|.cpp|.rb|.py|.pl)$" | head -n 1)
+sol=$(ls sols/*-100pts.* | egrep "(.c|.C|.cc|.cpp|.rb|.py|.pl)$" | head -n 1)
 sol_cmd=$(sh $scripts_dir/compile.sh $sol)
 
 printf "Generating output%55s\n" $sol

@@ -7,7 +7,7 @@ case $source in
 		gcc -O2 -fomit-frame-pointer -o $t $source
 		cmd="$t"
 		;;
-	*.cpp)
+	*.C|*.cc|*.cpp)
 		t=`mktemp /tmp/XXXXXXXXXX`
 		g++ -O2 -fomit-frame-pointer -o $t $source
 		cmd="$t"
