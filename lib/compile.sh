@@ -10,14 +10,14 @@ case $source in
     d="`mktemp -d /tmp/XXXXXXXXXX`"
 		t="`mktemp /tmp/XXXXXXXXXX`"
     cp "$source" "$d/a.c"
-		gcc -std=gnu99 -O2 -fomit-frame-pointer -o "$t" "$d/a.c"
+		gcc -lm -std=gnu99 -O2 -fomit-frame-pointer -o "$t" "$d/a.c"
     ret_val=$?
 		cmd="$t"
     rm -rf "$d"
 		;;
 	*.c)
 		t=`mktemp /tmp/XXXXXXXXXX`
-		gcc -O2 -fomit-frame-pointer -o $t $source
+		gcc -lm -O2 -fomit-frame-pointer -o $t $source
     ret_val=$?
     cmd="$t"
     ;;
