@@ -92,7 +92,10 @@ module Guara
         f.puts "------------------------------------------------------------------------"
         f.puts IO.read(p.stderr.path)
         f.flush
+        f.close
       end
+      p.stdout.close
+      p.stderr.close
       @compiled = (exit_code == Guara::EXIT_SUCCESS)
     end
 
