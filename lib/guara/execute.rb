@@ -36,37 +36,37 @@ module Guara
       return @compiled unless @compiled.nil?
       p = nil
       case @source_file_extension
-      when '\.c99'
+      when '.c99'
         source_file_c = File.join(@tmp_dir, 'sol.c')
         FileUtils.cp(@source_file, source_file_c)
         p = ChildProcess.build("gcc -lm -std=gnu99 -O2 -fomit-frame-pointer #{source_file_c} -o #{@compiled_file}")
         @execute_command = @compiled_file
-      when '\.c'
+      when '.c'
         p = ChildProcess.build("gcc -lm -O2 -fomit-frame-pointer #{@source_file} -o #{@compiled_file}")
         @execute_command = @compiled_file
-      when /\.c(pp|c)/
+      when /\.c(pp|c)$/
         p = ChildProcess.build("g++ -O2 -fomit-frame-pointer #{@source_file} -o #{@compiled_file}")
         @execute_command = @compiled_file
-      when /\.sh/
+      when '.sh'
         @execute_command = "sh #{@source_file}"
         return @compiled = Guara::EXIT_SUCCESS
-      when /\.bash/
+      when '.bash'
         @execute_command = "bash #{@source_file}"
         return @compiled = Guara::EXIT_SUCCESS
-      when /\.rb/
+      when '.rb'
         p = ChildProcess.build("ruby -c #{@source_file}")
         @execute_command = "ruby #{@source_file}"
-      when /\.py/
+      when '.py'
         p = ChildProcess.build("python -m py_compile #{@source_file}")
         @execute_command = "python #{@source_file}"
-      when /\.java/
+      when '.java'
         FileUtils.cp(@source_file, @tmp_dir)
         FileUtils.cd(@tmp_dir) do
           p = ChildProcess.build("javac #{File.basename(@source_file)}")
         end
         class_file = File.basename(@source_file, '.java')
         @execute_command = "java -cp #{@tmp_dir} #{class_file}"
-      when /.pas/
+      when '.pas'
         FileUtils.cp(@source_file, @tmp_dir)
         FileUtils.cd(@tmp_dir) do
           p = ChildProcess.build("fpc -O2 -o#{@compiled_file} #{@source_file}")
@@ -78,7 +78,7 @@ module Guara
       exit_code = nil
 
       case @source_file_extension
-      when /.java/
+      when '.java'
         FileUtils.cd(@tmp_dir) do
           exit_code = p.run!
         end
@@ -115,6 +115,12 @@ module Guara
       p.stdout.close if @output_file
       p.stderr.close if @error_file
       exit_code
+    end
+
+    def close_files
+      p.stdin.close if p.stdin
+      p.stdout.close if p.stdout
+      p.stderr.close if p.stderr
     end
   end
 end
