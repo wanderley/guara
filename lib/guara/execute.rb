@@ -36,30 +36,30 @@ module Guara
       return @compiled unless @compiled.nil?
       p = nil
       case @source_file_extension
-      when '.c99'
+      when '\.c99'
         source_file_c = File.join(@tmp_dir, 'sol.c')
         FileUtils.cp(@source_file, source_file_c)
         p = ChildProcess.build("gcc -lm -std=gnu99 -O2 -fomit-frame-pointer #{source_file_c} -o #{@compiled_file}")
         @execute_command = @compiled_file
-      when '.c'
+      when '\.c'
         p = ChildProcess.build("gcc -lm -O2 -fomit-frame-pointer #{@source_file} -o #{@compiled_file}")
         @execute_command = @compiled_file
-      when /.c(pp|c)/
+      when /\.c(pp|c)/
         p = ChildProcess.build("g++ -O2 -fomit-frame-pointer #{@source_file} -o #{@compiled_file}")
         @execute_command = @compiled_file
-      when /.sh/
+      when /\.sh/
         @execute_command = "sh #{@source_file}"
         return @compiled = Guara::EXIT_SUCCESS
-      when /.bash/
+      when /\.bash/
         @execute_command = "bash #{@source_file}"
         return @compiled = Guara::EXIT_SUCCESS
-      when /.rb/
+      when /\.rb/
         p = ChildProcess.build("ruby -c #{@source_file}")
         @execute_command = "ruby #{@source_file}"
-      when /.py/
+      when /\.py/
         p = ChildProcess.build("python -m py_compile #{@source_file}")
         @execute_command = "python #{@source_file}"
-      when /.java/
+      when /\.java/
         FileUtils.cp(@source_file, @tmp_dir)
         FileUtils.cd(@tmp_dir) do
           p = ChildProcess.build("javac #{File.basename(@source_file)}")
