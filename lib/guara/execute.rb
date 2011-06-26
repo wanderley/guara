@@ -47,6 +47,12 @@ module Guara
       when /.c(pp|c)/
         p = ChildProcess.build("g++ -O2 -fomit-frame-pointer #{@source_file} -o #{@compiled_file}")
         @execute_command = @compiled_file
+      when /.sh/
+        @execute_command = "sh #{@source_file}"
+        return @compiled = Guara::EXIT_SUCCESS
+      when /.bash/
+        @execute_command = "bash #{@source_file}"
+        return @compiled = Guara::EXIT_SUCCESS
       when /.rb/
         p = ChildProcess.build("ruby -c #{@source_file}")
         @execute_command = "ruby #{@source_file}"

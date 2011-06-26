@@ -21,6 +21,12 @@ case $source in
 		g++ -O2 -fomit-frame-pointer -o $t $source
 		cmd="$t"
 		;;
+  *.sh)
+    cmd="sh $source"
+    ;;
+  *.bash)
+    cmd="bash $source"
+    ;;
 	*.py)
 		cmd="python $source"
 		;;

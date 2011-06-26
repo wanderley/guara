@@ -27,6 +27,12 @@ case $source in
     ret_val=$?
     cmd="$t"
     ;;
+  *.sh)
+    cmd="sh $source"
+    ;;
+  *.bash)
+    cmd="bash $source"
+    ;;
   *.py)
     cmd="python $source"
     ;;
