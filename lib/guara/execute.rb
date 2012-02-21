@@ -94,8 +94,8 @@ module Guara
         f.flush
         f.close
       end
-      p.stdout.close
-      p.stderr.close
+      p.stdout.close if !p.stdout.closed?
+      p.stderr.close if !p.stdout.closed?
       @compiled = (exit_code == Guara::EXIT_SUCCESS)
     end
 
