@@ -52,6 +52,10 @@ module Guara
         run_command.call()
       end
 
+      @stdin.close  if @stdin
+      @stdout.close if @stdout
+      @stderr.close if @stderr
+
       if status.exited?
         return @exit_code = Guara::EXIT_SUCCESS if status.exitstatus == 0
         return @exit_code = status.exitstatus + Guara::EXIT_GAP

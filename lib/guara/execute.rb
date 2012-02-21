@@ -111,9 +111,9 @@ module Guara
 
       exit_code = p.run!
 
-      p.stdin.close  if @input_file
-      p.stdout.close if @output_file
-      p.stderr.close if @error_file
+      p.stdin.close  if @input_file  && !p.stdin.closed?
+      p.stdout.close if @output_file && !p.stdout.closed?
+      p.stderr.close if @error_file  && !p.stderr.closed?
       exit_code
     end
 
